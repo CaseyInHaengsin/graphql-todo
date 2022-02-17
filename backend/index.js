@@ -31,9 +31,14 @@ const typeDefs = gql`
     getTasks: [Task]
   }
 
+  type Status {
+    message: String
+  }
+
   type Mutation {
     addTodo(task: String!): Task
     updateTodo(id: ID!, task: String!): Task
+    deleteTodo(id: ID!): Status
   }
 `
 const resolvers = {
@@ -55,6 +60,13 @@ const resolvers = {
       const pretendUpdatedTask = { id: args?.id, task: args?.task }
       tasks = [...tasks, pretendUpdatedTask]
       return pretendUpdatedTask
+    },
+    deleteTodo: (parent, args, ctx, info) => {
+      tasks = tasks.filter(task => task.id !== args?.id)
+
+      return {
+        message: `yay, you deleted the task with id ${args?.id}`
+      }
     }
   }
 }
