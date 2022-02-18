@@ -26,9 +26,7 @@ const typeDefs = gql`
   }
 
   type Query {
-    greetings: String
-    anotherGreeting: String
-    getTasks: [Task]
+    getTasks(id: ID, search: String): [Task]
   }
 
   type Status {
@@ -43,7 +41,18 @@ const typeDefs = gql`
 `
 const resolvers = {
   Query: {
-    getTasks: () => {
+    getTasks: (parent, args, ctx, info) => {
+      const { id, search } = args
+      if (id && search)
+        throw new Error(
+          'pick a lane and stay in it. Use an ID or a search term'
+        )
+      if (id) {
+        return tasks.find(task => task.id === id)
+      }
+      if (search) {
+        return tasks.filter(task => task.task.toLowerCase().includes(search))
+      }
       return tasks
     }
   },
