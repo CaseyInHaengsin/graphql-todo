@@ -21,7 +21,8 @@ const typeDefs = gql`
   }
 
   type Query {
-    getTasks(id: ID, search: String): [Task]
+    tasks(search: String): [Task]
+    task(id: ID!): Task
   }
 
   type Status {
@@ -36,20 +37,8 @@ const typeDefs = gql`
 `
 const resolvers = {
   Query: {
-    getTasks: async (parent, args, ctx, info) => {
-      const { id, search } = args
-      if (id && search)
-        throw new Error(
-          'pick a lane and stay in it. Use an ID or a search term'
-        )
-      if (id) {
-        const taskResp = await ctx.api.get(`/tasks/${id}`)
-        if (taskResp?.status !== 200) {
-          throw new Error('Failed to get user')
-        }
-
-        return [taskResp?.data]
-      }
+    tasks: async (parent, args, ctx, info) => {
+      const { search } = args
       if (search) {
         const tasksResp = await ctx.api.get('/tasks')
         if (tasksResp?.status !== 200) {
@@ -65,13 +54,19 @@ const resolvers = {
         throw new Error('failed to get users')
       }
       return tasksResp?.data
+    },
+    task: async (parent, args, ctx, info) => {
+      const taskResp = await ctx.api.get(`/tasks/${args?.id}`)
+      if (taskResp?.status !== 200) {
+        throw new Error('Failed to get user')
+      }
+
+      return taskResp?.data
     }
   },
 
   Mutation: {
     addTodo: async (parent, args, ctx, info) => {
-      const id = uuidv4()
-
       const taskResp = await ctx.api.post('/tasks', { task: args?.task })
       return taskResp?.data
     },
