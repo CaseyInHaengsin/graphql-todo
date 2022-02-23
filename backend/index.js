@@ -26,14 +26,20 @@ const typeDefs = gql`
     category: String
   }
 
+  input NameInput {
+    id: ID!
+    text: String!
+  }
+
   type Mutation {
     createItem(textInput: String!): Item
-    updateItem(input: ItemInput!, id: ID!): Item
+    updateItem(input: ItemInput!): Item
     deleteItem(id: ID!): String
+    toggleItem(id: ID!): Item
+    changeText(input: NameInput!): Item
   }
 `
 
-// need to Delete
 const resolvers = {
   Query: {
     getItems: (_, __, { db }) => {
@@ -47,8 +53,14 @@ const resolvers = {
     createItem: (_, { textInput }, { db }) => {
       return create(db, textInput)
     },
-    updateItem: (_, { input, id }, { db }) => {
-      return update(db, id, input)
+    updateItem: (_, { input }, { db }) => {
+      return update(db, input)
+    },
+    toggleItem: (_, { id }, { db }) => {
+      return toggle(db, id)
+    },
+    changeText: (_, { input }, { db }) => {
+      return textChange(db, input)
     },
     deleteItem: (_, { id }, { db }) => {
       return remove(db, id)
@@ -61,9 +73,11 @@ server.listen({ port: PORT }).then(({ url }) => {
   console.log(`Oh Boy!! The server is ready at ${url}`)
 })
 
+// -------------------------------------------------------------------------- //
 //
-// CRUD functions
+//                               CRUD functions
 //
+// -------------------------------------------------------------------------- //
 
 function create (db, text) {
   const item = { text, id: nanoid(), finished: false }
@@ -83,9 +97,9 @@ function getItem (db, id) {
   return getItems(db).then(e => e.filter(t => t.id === id).pop())
 }
 
-function update (db, id, input) {
+function update (db, input) {
   getItems(db).then(res => {
-    let index = res.findIndex(e => e.id === id)
+    let index = res.findIndex(e => e.id === input.id)
     if (index === -1) index = res.length
     res.splice(index, 1, input)
     fs.writeFile(db, JSON.stringify(res))
@@ -93,10 +107,28 @@ function update (db, id, input) {
   return input
 }
 
+function toggle (db, id) {
+  return getItems(db).then(res => {
+    let index = res.findIndex(e => e.id === id)
+    res[index].finished = !res[index].finished
+    fs.writeFile(db, JSON.stringify(res))
+    return res[index]
+  })
+}
+
+function textChange (db, input) {
+  return getItems(db).then(res => {
+    let index = res.findIndex(e => e.id === input.id)
+    res[index].text = input.text
+    fs.writeFile(db, JSON.stringify(res))
+    return res[index]
+  })
+}
+
 function remove (db, id) {
   getItems(db).then(res => {
     res = res.filter(t => t.id !== id)
     fs.writeFile(db, JSON.stringify(res))
+    return `${id} has been deleted`
   })
-  return `${id} has been deleted`
 }

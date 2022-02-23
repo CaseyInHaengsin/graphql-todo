@@ -2,7 +2,12 @@
   {
     "text": "Hello there! Testing!!",
     "id": "OfFYoKZoxBFOjSUySnnT2",
-    "finished": false
+    "finished": true
   },
-  { "text": "Changed!!", "id": "nvxBrIEM4-FxEVjwL8QiU", "finished": true }
+  {
+    "text": "Did we change again!?",
+    "id": "nvxBrIEM4-FxEVjwL8QiU",
+    "finished": true
+  },
+  { "text": "Updated!!", "id": "a9amUgG4_hQWQgHZU2AFE", "finished": true }
 ]
