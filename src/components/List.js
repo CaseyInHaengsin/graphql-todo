@@ -1,17 +1,32 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
+import { useQuery, gql } from '@apollo/client'
+import Loader from './Loader'
+import { useAddTodoMutation } from '../utils/add-todo-mutation'
+
 import ListItem from './ListItem'
 
 const List = () => {
   const [listData, setListData] = useState([])
   const [inputData, setInputData] = useState('')
+  const { loading, error, data } = useQuery(listQuery)
+  const addTodo = useAddTodoMutation()
+
+  useEffect(() => {
+    if (!data) return
+    setListData(data?.getItems)
+  }, [loading])
 
   const handleChange = e => {
-    console.log('e: ', e)
     setInputData(e.target.value)
   }
 
-  const addItem = () => {
-    return inputData && setListData([...listData, inputData])
+  const addItem = async () => {
+    const data = await addTodo(inputData)
+    const newTodo = {
+      id: data?.data?.createItem?.id,
+      text: data?.data?.createItem?.text
+    }
+    return newTodo && setListData([...listData, newTodo])
   }
 
   const deleteItem = index => {
@@ -27,6 +42,8 @@ const List = () => {
     setListData(list)
   }
 
+  if (loading) return <Loader />
+
   return (
     <div className='list-container'>
       <input placeholder='To do' onChange={e => handleChange(e)} />
@@ -39,9 +56,9 @@ const List = () => {
       {listData.map((listItem, itemIndex) => {
         return (
           <ListItem
-            listItem={listItem}
+            listItem={listItem?.text}
             itemIndex={itemIndex}
-            key={listItem + itemIndex}
+            key={listItem?.id}
             deleteItemFn={deleteItem}
             updateItemFn={updateItem}
           />
@@ -50,5 +67,14 @@ const List = () => {
     </div>
   )
 }
+
+const listQuery = gql`
+  query getItems {
+    getItems {
+      id
+      text
+    }
+  }
+`
 
 export default List

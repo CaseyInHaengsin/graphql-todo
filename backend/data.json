@@ -1,13 +1,1 @@
-[
-  {
-    "text": "Hello there! Testing!!",
-    "id": "OfFYoKZoxBFOjSUySnnT2",
-    "finished": true
-  },
-  {
-    "text": "Did we change again!?",
-    "id": "nvxBrIEM4-FxEVjwL8QiU",
-    "finished": true
-  },
-  { "text": "Updated!!", "id": "a9amUgG4_hQWQgHZU2AFE", "finished": true }
-]
+[{"text":"Hello there! Testing!!","id":"OfFYoKZoxBFOjSUySnnT2","finished":false},{"text":"Did we change again!?","id":"nvxBrIEM4-FxEVjwL8QiU","finished":false},{"text":"Updated!!","id":"a9amUgG4_hQWQgHZU2AFE","finished":true},{"text":"cool stuff","id":"mwnimPXNDj5XblQxron9H","finished":false},{"text":"add item","id":"JFlcRuCoSP3rh13c6LRDD","finished":false},{"text":"add another item","id":"5NA90N3b4Q2OQL0SUi6zM","finished":false},{"text":"heyo, cool stuff","id":"q6Zv4_qUuWP9CKNB8Vo3a","finished":false},{"text":"fun stuff","id":"9MdTva5n6xV9eKDJIuIYu","finished":false},{"text":"more fun stuff","id":"HD-bnTgiD77x4mP1YKpx-","finished":false}]
