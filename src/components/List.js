@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react'
 import { useQuery, gql } from '@apollo/client'
 import Loader from './Loader'
 import { useAddTodoMutation } from '../utils/add-todo-mutation'
+import { useUpdateTodoMutation } from '../utils/update-todo-mutation'
 
 import ListItem from './ListItem'
 
@@ -10,6 +11,7 @@ const List = () => {
   const [inputData, setInputData] = useState('')
   const { loading, error, data } = useQuery(listQuery)
   const addTodo = useAddTodoMutation()
+  const updateTodo = useUpdateTodoMutation()
 
   useEffect(() => {
     if (!data) return
@@ -35,10 +37,14 @@ const List = () => {
     setListData(list)
   }
 
-  const updateItem = (index, newData) => {
+  const updateItem = async (index, newData) => {
     if (!newData) return
     let list = [...listData]
-    list[index] = newData
+    let item = list[index]
+    list = [...list.filter(task => task?.id !== item?.id)]
+    const data = await updateTodo(item?.id, newData)
+    const newItem = data?.data?.updateItem
+    list.push(newItem)
     setListData(list)
   }
 
