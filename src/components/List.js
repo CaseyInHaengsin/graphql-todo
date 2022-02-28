@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react'
 import { useQuery, gql } from '@apollo/client'
 import Loader from './Loader'
 import { useAddTodoMutation } from '../utils/add-todo-mutation'
+import { useDeleteItemMutation } from '../utils/delete-todo-mutation'
 import { useUpdateTodoMutation } from '../utils/update-todo-mutation'
 
 import ListItem from './ListItem'
@@ -12,6 +13,7 @@ const List = () => {
   const { loading, error, data } = useQuery(listQuery)
   const addTodo = useAddTodoMutation()
   const updateTodo = useUpdateTodoMutation()
+  const deleteTodo = useDeleteItemMutation()
 
   useEffect(() => {
     if (!data) return
@@ -31,8 +33,10 @@ const List = () => {
     return newTodo && setListData([...listData, newTodo])
   }
 
-  const deleteItem = index => {
+  const deleteItem = async index => {
     let list = [...listData]
+    const listItem = list[index]
+    await deleteTodo(listItem?.id)
     list.splice(index, 1)
     setListData(list)
   }

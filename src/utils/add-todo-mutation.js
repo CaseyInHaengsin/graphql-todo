@@ -2,9 +2,7 @@ import { useMutation, gql } from '@apollo/client'
 
 export const useAddTodoMutation = () => {
   const [createItem] = useMutation(mutation)
-  return text => {
-    return createItem(getParams(text))
-  }
+  return text => createItem(getParams(text))
 }
 
 const mutation = gql`
